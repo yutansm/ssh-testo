@@ -18,13 +18,9 @@ jobs:
         ssh-private-key: ${{ secrets.DEPLOY_KEY }}
 
     - name: Check SSH connection
-      uses: appleboy/ssh-action@master
-      with:
-        host: laurel.kudpc.kyoto-u.ac.jp
-        username: b36156
-        key: ${{ secrets.DEPLOY_KEY }}
-        script: echo "SSH connection successful"
+      run: |
+        ssh -o StrictHostKeyChecking=no b36156@laurel.kudpc.kyoto-u.ac.jp echo "SSH connection successful"
 
     - name: Rsync deployments
       run: |
-        rsync -avzr --delete -e "ssh -i ${{ secrets.DEPLOY_KEY }}" ./ b36156@laurel.kudpc.kyoto-u.ac.jp:/LARGE0/gr10291/nishimori2/this_is_a_test
+        rsync -avzr --delete -e "ssh -o StrictHostKeyChecking=no" ./ b36156@laurel.kudpc.kyoto-u.ac.jp:/LARGE0/gr10291/nishimori2/this_is_a_test

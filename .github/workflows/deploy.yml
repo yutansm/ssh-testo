@@ -11,22 +11,15 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    
-    - name: Get list of changed files
-      id: changes
-      run: |
-        git fetch origin main-branch
-        echo "Fetched main-branch"
-        git diff --name-only origin/main-branch HEAD > changed_files.txt
-        echo "Generated changed_files.txt"
-        cat changed_files.txt
-        echo "Diff output:"
-        git diff --name-only origin/main-branch HEAD
-    - name: Set up SSH
-      uses: webfactory/ssh-agent@v0.5.4
-      with:
-        ssh-private-key: ${{ secrets.DEPLOY_KEY }}
 
     - name: Rsync deployments
-      run: |
-        rsync -avzru --delete --files-from=changed_files.txt -e "ssh -o StrictHostKeyChecking=no" ./ b36156@laurel.kudpc.kyoto-u.ac.jp:/LARGE0/gr10291/nishimori2/this_is_a_test
+      uses: burnett01/rsync-deployments@7.0.1
+      with:
+        switches: -avzru --delete --exclude '.*'
+        path: ./
+        remote_path: /LARGE0/gr10291/nishimori2/this_is_a_test
+        remote_host: laurel.kudpc.kyoto-u.ac.jp
+        remote_user: b36156
+        remote_key: ${{ secrets.DEPLOY_KEY }}
+        remote_port: 22
+        

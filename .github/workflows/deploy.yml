@@ -12,13 +12,14 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     
+    - name: Get list of changed files
+      id: changes
+      run: |
+        git fetch origin main-branch
+        git diff --name-only HEAD^ HEAD > changed_files.txt
+    
     - name: Rsync deployments
-      uses: burnett01/rsync-deployments@7.0.1
-      with:
-        switches: -avzr --delete --exclude '.*' --update
-        path: ./
-        remote_path: /LARGE0/gr10291/nishimori2/this_is_a_test
-        remote_host: laurel.kudpc.kyoto-u.ac.jp
-        remote_user: b36156
-        remote_key: ${{ secrets.DEPLOY_KEY }}
-        remote_port: 22
+      run: |
+        rsync -avzr --delete --exclude '.*' --files-from=changed_files.txt ./ b36156@laurel.kudpc.kyoto-u.ac.jp:/LARGE0/gr10291/nishimori2/this_is_a_test
+      env:
+        DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}

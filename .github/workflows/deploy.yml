@@ -16,7 +16,11 @@ jobs:
       id: changes
       run: |
         git fetch origin main-branch
-        git diff --name-only HEAD^ HEAD > changed_files.txt
+        if git rev-parse HEAD^ >/dev/null 2>&1; then
+          git diff --name-only HEAD^ HEAD > changed_files.txt
+        else
+          git diff --name-only HEAD > changed_files.txt
+        fi
     
     - name: Rsync deployments
       run: |

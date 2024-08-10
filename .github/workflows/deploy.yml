@@ -16,9 +16,12 @@ jobs:
       id: changes
       run: |
         git fetch origin main-branch
+        echo "Fetched main-branch"
         git diff --name-only origin/main-branch HEAD > changed_files.txt
+        echo "Generated changed_files.txt"
         cat changed_files.txt
-    
+        echo "Diff output:"
+        git diff --name-only origin/main-branch HEAD
     - name: Set up SSH
       uses: webfactory/ssh-agent@v0.5.4
       with:
